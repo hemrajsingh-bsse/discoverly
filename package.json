@@ -1,0 +1,12 @@
+{
+  "name": "discoverly",
+  "version": "1.0.0",
+  "description": "Searchable listing dashboard: live search, combinable filters, sorting, pagination and empty/error states in vanilla JavaScript.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

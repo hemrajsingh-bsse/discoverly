@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discoverly — Find your next opportunity</title>
+  <meta name="description" content="Search and filter jobs, internships and freelance projects in real time.">
+  <meta name="theme-color" content="#0B0E23">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235B47F5'/%3E%3Cpath d='m16 6 2.5 7.5L26 16l-7.5 2.5L16 26l-2.5-7.5L6 16l7.5-2.5z' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- ES modules and fetch() do not work from file://, so warn instead of failing silently. -->
+  <script>document.documentElement.classList.toggle('is-file', location.protocol === 'file:');</script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <!-- Icon sprite: referenced with <use href="#i-name">. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><path d="m20.5 20.5-4.2-4.2"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M19 21l-7-4.5L5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="13.5" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2.5 13h19"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2.5 9.5 5-9.5 5-9.5-5z"/><path d="m2.5 12 9.5 5 9.5-5M2.5 16.5l9.5 5 9.5-5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5a14.5 14.5 0 0 1 0 19 14.5 14.5 0 0 1 0-19z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="m12 2.5 2.4 7.1 7.1 2.4-7.1 2.4L12 21.5l-2.4-7.1L2.5 12l7.1-2.4z"/></symbol>
+    <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1L20.5 8.5"/><path d="M20.5 3.5v5h-5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 2.2 18a2 2 0 0 0 1.7 3h16.2a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4.5M12 17.5h.01"/></symbol>
+  </svg>
+
+  <div class="file-warning" role="alert">
+    <strong>This page has to be opened through a local server.</strong>
+    Browsers block JavaScript modules and <code>fetch()</code> on <code>file://</code> pages.
+    In VS Code, right-click <code>index.html</code> → <em>Open with Live Server</em>, or run <code>npx serve .</code> in this folder.
+  </div>
+
+  <a class="skip-link" href="#results">Skip to results</a>
+
+  <header class="topbar">
+    <div class="container topbar__inner">
+      <a class="brand" href="./" aria-label="Discoverly home">
+        <span class="brand__mark"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+        Discoverly
+      </a>
+      <button id="saved-toggle" class="saved-toggle" type="button" aria-pressed="false" data-action="toggle-saved">
+        <svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg>
+        <span>Saved</span>
+        <span id="saved-count" class="saved-toggle__count">0</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero__inner">
+      <p class="eyebrow"><span class="eyebrow__dot" aria-hidden="true"></span><span id="hero-eyebrow">Fresh opportunities, updated weekly</span></p>
+      <h1 id="hero-title" class="hero__title">Find work that <span class="text-gradient">moves you forward</span></h1>
+      <p class="hero__lead">Search jobs, internships and freelance projects by title, skill or keyword, then narrow them down with filters that combine.</p>
+
+      <form id="search-form" class="search" role="search">
+        <svg class="icon search__icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <label class="sr-only" for="search">Search opportunities</label>
+        <input id="search" class="search__input" type="search" name="q" autocomplete="off" spellcheck="false" enterkeyhint="search"
+               placeholder="Search title, skill or keyword…">
+        <button id="search-clear" class="search__clear" type="button" aria-label="Clear search" data-action="clear-search" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+        <kbd class="search__kbd" aria-hidden="true">/</kbd>
+        <button class="btn btn--primary search__submit" type="submit">
+          <span>Search</span><svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+        </button>
+      </form>
+
+      <div class="popular">
+        <span class="popular__label">Popular:</span>
+        <div id="popular" class="popular__list"></div>
+      </div>
+
+      <dl id="hero-stats" class="stats" aria-live="off"></dl>
+    </div>
+  </section>
+
+  <main class="container explore">
+    <aside id="filters-panel" class="filters" aria-labelledby="filters-title">
+      <div class="filters__head">
+        <h2 id="filters-title" class="filters__title">
+          <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>Filters
+        </h2>
+        <button id="reset-filters" class="link-btn" type="button" data-action="reset-filters" hidden>Reset</button>
+        <button class="icon-btn filters__close" type="button" data-action="close-filters" aria-label="Close filters">
+          <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+        </button>
+      </div>
+      <div id="filter-groups" class="filters__body"></div>
+      <div class="filters__foot">
+        <button id="show-results" class="btn btn--primary btn--block" type="button" data-action="show-results">Show results</button>
+      </div>
+    </aside>
+    <div id="filters-backdrop" class="backdrop" data-action="close-filters" hidden></div>
+
+    <section id="results" class="results" aria-labelledby="results-title" tabindex="-1">
+      <div class="toolbar">
+        <div>
+          <h2 id="results-title" class="results__title">Opportunities</h2>
+          <p id="results-summary" class="results__summary" role="status" aria-live="polite">Loading opportunities…</p>
+        </div>
+        <div class="toolbar__controls">
+          <button id="filters-open" class="btn btn--ghost filters-open" type="button" data-action="open-filters"
+                  aria-controls="filters-panel" aria-expanded="false">
+            <svg class="icon" aria-hidden="true"><use href="#i-sliders"/></svg>Filters
+            <span id="filters-badge" class="count-badge" hidden>0</span>
+          </button>
+          <label class="select">
+            <span class="select__label">Sort</span>
+            <select id="sort"></select>
+          </label>
+          <label class="select">
+            <span class="select__label">Show</span>
+            <select id="page-size"></select>
+          </label>
+        </div>
+      </div>
+
+      <div id="active-tags" class="active-tags" aria-label="Active filters" hidden></div>
+
+      <div id="view-list">
+        <div id="grid" class="grid" aria-busy="true"></div>
+        <nav id="pagination" class="pagination" aria-label="Pagination" hidden></nav>
+      </div>
+
+      <div id="view-empty" class="state" hidden>
+        <svg class="state__art" viewBox="0 0 160 120" aria-hidden="true">
+          <rect x="22" y="22" width="88" height="66" rx="12" fill="#EFEDFF"/>
+          <rect x="34" y="36" width="44" height="7" rx="3.5" fill="#C9C1FF"/>
+          <rect x="34" y="50" width="62" height="6" rx="3" fill="#DCD7FF"/>
+          <rect x="34" y="62" width="34" height="6" rx="3" fill="#DCD7FF"/>
+          <circle cx="104" cy="70" r="24" fill="#fff" stroke="#5B47F5" stroke-width="7"/>
+          <path d="m121 87 18 18" stroke="#5B47F5" stroke-width="9" stroke-linecap="round"/>
+          <path d="M96 76c4-4 12-4 16 0" stroke="#FF5C8A" stroke-width="4" stroke-linecap="round" fill="none"/>
+          <circle cx="97" cy="65" r="2.6" fill="#0F1226"/><circle cx="111" cy="65" r="2.6" fill="#0F1226"/>
+        </svg>
+        <h3 id="empty-title" class="state__title">No opportunities found</h3>
+        <p id="empty-message" class="state__message"></p>
+        <div id="empty-actions" class="state__actions"></div>
+        <div id="empty-suggestions" class="state__suggestions" hidden>
+          <span>Try searching for</span>
+          <div id="empty-popular" class="popular__list popular__list--light"></div>
+        </div>
+      </div>
+
+      <div id="view-error" class="state state--error" role="alert" hidden>
+        <span class="state__icon"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg></span>
+        <h3 class="state__title">We couldn’t load the listings</h3>
+        <p class="state__message">Something went wrong while fetching opportunities. Check your connection and try again.</p>
+        <p id="error-detail" class="state__detail"></p>
+        <div class="state__actions">
+          <button class="btn btn--primary" type="button" data-action="retry">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>Try again
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <a class="brand brand--dark" href="./">
+        <span class="brand__mark"><svg class="icon icon--fill" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+        Discoverly
+      </a>
+      <p>A front-end demo. Listings load from a local JSON file and all searching happens in your browser.</p>
+      <p class="footer__copy">© 2026 Discoverly</p>
+    </div>
+  </footer>
+
+  <dialog id="details" class="modal" aria-labelledby="modal-title">
+    <article class="modal__card">
+      <div class="modal__banner" aria-hidden="true"></div>
+      <button class="icon-btn modal__close" type="button" data-action="close-modal" aria-label="Close details">
+        <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+      </button>
+      <header class="modal__head">
+        <div id="modal-logo"></div>
+        <div>
+          <h2 id="modal-title" class="modal__title"></h2>
+          <p id="modal-company" class="modal__company"></p>
+        </div>
+      </header>
+      <div class="modal__body">
+        <div id="modal-badges" class="badges"></div>
+        <dl id="modal-facts" class="facts"></dl>
+        <h3 class="modal__subtitle">About the role</h3>
+        <p id="modal-description" class="modal__text"></p>
+        <h3 class="modal__subtitle">Skills</h3>
+        <ul id="modal-skills" class="skills"></ul>
+      </div>
+      <footer class="modal__foot">
+        <button class="btn btn--primary" type="button" data-action="apply">
+          Apply now<svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+        </button>
+        <button id="modal-save" class="btn btn--ghost modal__save" type="button" data-action="bookmark">
+          <svg class="icon" aria-hidden="true"><use href="#i-bookmark"/></svg><span data-label>Save</span>
+        </button>
+      </footer>
+      <p id="apply-note" class="note" role="status" hidden>This is a demo, so no application was sent.</p>
+    </article>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
